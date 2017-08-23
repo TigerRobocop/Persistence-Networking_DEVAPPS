@@ -46,12 +46,9 @@ public class ListFragment extends android.support.v4.app.ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-       /* TODO ::  Get Shared preferences
-           if date <> lastUpdate then check connection >  run task
+       /* TODO ::  Get Shared preferences: if date <> lastUpdate then check connection >  run task
         */
     }
-
-
 
     @Override
     public void onResume() {

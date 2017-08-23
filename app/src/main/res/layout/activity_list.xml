@@ -6,21 +6,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.tigerrobocop.liv.pn.ListActivity">
-    <!--
-       <TextView
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:text="lala"
-           android:textAppearance="?android:attr/textAppearanceLarge"
-           android:padding="30dp"
-           android:id="@+id/txt_result" />
-      -->
 
     <fragment
         android:id="@+id/list_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.tigerrobocop.liv.pn.ListFragment"/>
-    <!---->
 
 </LinearLayout>

@@ -26,6 +26,7 @@ import java.util.List;
  */
 
 public class Util {
+
     public static boolean isConnected(Context c) {
         boolean connected = false;
 
@@ -40,7 +41,6 @@ public class Util {
         return connected;
     }
 
-
     public static InputStream getStream(String _url) {
         HttpURLConnection conn = null;
         try {
@@ -49,11 +49,9 @@ public class Util {
             conn = (HttpURLConnection) url.openConnection();
             conn.connect();
 
-
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 return conn.getInputStream();
             }
-
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -68,7 +66,6 @@ public class Util {
         return null;
 
     }
-
 
     public static String streamToString(InputStream stream) {
         String result = "";
@@ -117,6 +114,5 @@ public class Util {
 
         return result;
     }
-
 
 }
