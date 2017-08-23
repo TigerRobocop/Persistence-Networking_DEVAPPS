@@ -83,32 +83,5 @@ public class ListFragment extends android.support.v4.app.ListFragment {
         }
     }
 
-    private class LoadCatsTask extends AsyncTask<Void, Void, List<Cat>> {
-
-        @Override
-        protected List<Cat> doInBackground(Void... params) {
-            List<Cat> result = new ArrayList<>();
-
-            // connects to internet and places request
-            InputStream stream = Util.getStream(API_URL);
-
-            // cast stream to string
-            String body = Util.streamToString(stream);
-
-            // parses string to json, then json as object
-            result = Util.parse(body);
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(List<Cat> cats) {
-            super.onPostExecute(cats);
-
-            for (Cat obj : cats) {
-                Log.d("ARTliv", "Author name:" + obj.url);
-            }
-        }
-    }
 
 }
