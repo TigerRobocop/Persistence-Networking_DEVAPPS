@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
+import com.tigerrobocop.liv.pn.Model.APOD;
 import com.tigerrobocop.liv.pn.Model.Cat;
 
 import org.json.JSONArray;
@@ -24,8 +25,7 @@ import java.util.List;
  * Created by Livia on 14/08/2017.
  */
 
-public class Util
-{
+public class Util {
     public static boolean isConnected(Context c) {
         boolean connected = false;
 
@@ -42,17 +42,18 @@ public class Util
 
 
     public static InputStream getStream(String _url) {
-
+        HttpURLConnection conn = null;
         try {
             URL url = new URL(_url);
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(10000);
-            conn.setDoInput(true);
+            conn = (HttpURLConnection) url.openConnection();
+            //  conn.setRequestMethod("GET");
+            //  conn.setConnectTimeout(10000);
+            //   conn.setReadTimeout(10000);
+            //conn.setDoInput(true);
 
             conn.connect();
+
 
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 return conn.getInputStream();
@@ -63,6 +64,10 @@ public class Util
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
 
         return null;
@@ -95,6 +100,34 @@ public class Util
         return result;
     }
 
+    public static APOD parseAPOD(String body) {
+
+        APOD result = new APOD();
+
+        try {
+            JSONObject json = new JSONObject(body);
+/*
+            result.date = json.getString("date");
+            result.copyright = json.getString("copyright");
+            result.explanation = json.getString("explanation");
+            result.title = json.getString("title");
+            result.url = json.getString("url");
+*/
+            result = new APOD(
+                    json.getString("date")
+                    , json.getString("title")
+                    , json.getString("explanation")
+                    , json.getString("url")
+                    , json.getString("copyright")
+            );
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
 
     public static List<Cat> parse(String body) {
 
@@ -104,7 +137,7 @@ public class Util
             JSONObject json = new JSONObject(body);
             JSONArray array = json.getJSONArray("items");
 
-            for (int i = 0; i < array.length(); i++ ){
+            for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
 
                 Cat a = new Cat(

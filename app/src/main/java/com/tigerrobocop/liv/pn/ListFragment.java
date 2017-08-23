@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tigerrobocop.liv.pn.Model.APOD;
 import com.tigerrobocop.liv.pn.Model.Cat;
 import com.tigerrobocop.liv.pn.Util.Util;
 
@@ -19,9 +20,11 @@ import java.util.List;
 
 public class ListFragment extends android.support.v4.app.ListFragment {
 
-    public static final String API_URL = "http://api.flickr.com/services/feeds/photos_public.gne?tags=cats&format=json";
+    public static final String API_URL = "https://api.nasa.gov/planetary/apod?api_key=21jENl7ovyGUoIV8R0HB2PRXdsbCxUCxFdnW9C80";
 
-    List<Cat> mList;
+    List<APOD> mList;
+
+    APOD mAPOD;
 
     public ListFragment() {
         // Required empty public constructor
@@ -39,16 +42,46 @@ public class ListFragment extends android.support.v4.app.ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (Util.isConnected(getActivity())) {
+            GetAPODTask task = new GetAPODTask();
+            task.execute();
+        }
+/*
         if (mList.isEmpty()) {
             if (Util.isConnected(getActivity())) {
                 LoadCatsTask task = new LoadCatsTask();
                 task.execute();
             }
         }
-       // clearSearch();
+        // clearSearch(); */
     }
 
 
+    private class GetAPODTask extends AsyncTask<Void, Void, APOD> {
+
+        @Override
+        protected APOD doInBackground(Void... params) {
+
+            APOD result = new APOD();
+
+            // connects to internet and places request
+            InputStream stream = Util.getStream(API_URL);
+
+            // cast stream to string
+            String body = Util.streamToString(stream);
+
+            result = Util.parseAPOD(body);
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(APOD apod) {
+            super.onPostExecute(apod);
+
+            Log.d("APOD", "url:" + apod.url);
+        }
+    }
 
     private class LoadCatsTask extends AsyncTask<Void, Void, List<Cat>> {
 
@@ -72,7 +105,7 @@ public class ListFragment extends android.support.v4.app.ListFragment {
         protected void onPostExecute(List<Cat> cats) {
             super.onPostExecute(cats);
 
-            for(Cat obj: cats){
+            for (Cat obj : cats) {
                 Log.d("ARTliv", "Author name:" + obj.url);
             }
         }
