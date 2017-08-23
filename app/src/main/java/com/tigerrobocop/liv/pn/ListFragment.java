@@ -36,50 +36,22 @@ public class ListFragment extends android.support.v4.app.ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setRetainInstance(true);
-        mList = new ArrayList<APOD>();
 
+        mList = new ArrayList<APOD>();
         clearSearch();
     }
-
-    /*
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list, container, false);
-
-
-    }
-*/
-    public void clearSearch(){
-        mAdapter = new APODAdapter(getActivity(), mList);
-        setListAdapter(mAdapter);
-    }
-
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (Util.isConnected(getActivity())) {
-            GetAPODTask task = new GetAPODTask();
-            task.execute();
-        }
-/*
-        if (mList.isEmpty()) {
-            if (Util.isConnected(getActivity())) {
-                LoadCatsTask task = new LoadCatsTask();
-                task.execute();
-            }
-        }
-        // clearSearch(); */
+       /* TODO ::  Get Shared preferences
+           if date <> lastUpdate then check connection >  run task
+        */
     }
+
+
 
     @Override
     public void onResume() {
@@ -87,18 +59,17 @@ public class ListFragment extends android.support.v4.app.ListFragment {
         LoadList();
     }
 
+    public void clearSearch() {
+        mAdapter = new APODAdapter(getActivity(), mList);
+        setListAdapter(mAdapter);
+    }
+
     void LoadList() {
+
         DAO _dao = new DAO(getActivity());
-
         mList.clear();
-        mList.addAll(_dao.getAll());
+        mList.addAll(_dao.GetAll());
         mAdapter.notifyDataSetChanged();
-
-        if (getResources().getBoolean(R.bool.tablet)) {
-            if (mListPolish.size() > 0){
-                LoadFirstItem(mListPolish.get(0));
-            }
-        }
     }
 
     private class GetAPODTask extends AsyncTask<Void, Void, APOD> {
@@ -106,15 +77,14 @@ public class ListFragment extends android.support.v4.app.ListFragment {
         @Override
         protected APOD doInBackground(Void... params) {
 
-            APOD result = new APOD();
-
+            // // TODO: use okhttp?
             // connects to internet and places request
             InputStream stream = Util.getStream(API_URL);
 
             // cast stream to string
             String body = Util.streamToString(stream);
 
-            result = Util.parseAPOD(body);
+            APOD result = Util.parseAPOD(body);
 
             return result;
         }
@@ -123,7 +93,9 @@ public class ListFragment extends android.support.v4.app.ListFragment {
         protected void onPostExecute(APOD apod) {
             super.onPostExecute(apod);
 
+            // TODO :: insert into DB then refresh listview
             Log.d("APOD", "url:" + apod.url);
+
         }
     }
 

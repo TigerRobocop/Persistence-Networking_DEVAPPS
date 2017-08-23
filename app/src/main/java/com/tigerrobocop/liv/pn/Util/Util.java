@@ -47,11 +47,6 @@ public class Util {
             URL url = new URL(_url);
 
             conn = (HttpURLConnection) url.openConnection();
-            //  conn.setRequestMethod("GET");
-            //  conn.setConnectTimeout(10000);
-            //   conn.setReadTimeout(10000);
-            //conn.setDoInput(true);
-
             conn.connect();
 
 
@@ -106,13 +101,7 @@ public class Util {
 
         try {
             JSONObject json = new JSONObject(body);
-/*
-            result.date = json.getString("date");
-            result.copyright = json.getString("copyright");
-            result.explanation = json.getString("explanation");
-            result.title = json.getString("title");
-            result.url = json.getString("url");
-*/
+
             result = new APOD(
                     json.getString("date")
                     , json.getString("title")
@@ -129,31 +118,5 @@ public class Util {
         return result;
     }
 
-    public static List<Cat> parse(String body) {
 
-        List<Cat> result = new ArrayList<Cat>();
-
-        try {
-            JSONObject json = new JSONObject(body);
-            JSONArray array = json.getJSONArray("items");
-
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject obj = array.getJSONObject(i);
-
-                Cat a = new Cat(
-                        obj.getString("title")
-                        , obj.getString("link")
-                        , obj.getString("date_taken")
-                        , obj.getJSONObject("media").getString("m")
-                );
-
-                result.add(a);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
 }

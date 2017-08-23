@@ -41,6 +41,9 @@ public class DAO {
 
             if (id == -1)
                 throw new RuntimeException("Error inserting into db");
+            else {
+                // TODO :: update SharedPrefrences - lastUpdate date
+            }
 
         } catch(Exception e){
             e.printStackTrace();
@@ -71,7 +74,7 @@ public class DAO {
                 String copyright = cursor.getString(index_copyright);
 
                 APOD apod = new APOD(date, title, explanation, url, copyright);
-                
+
                 result.add(apod);
             }
 
