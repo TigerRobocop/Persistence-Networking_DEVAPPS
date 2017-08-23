@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.tigerrobocop.liv.pn.Model.APOD;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Livia on 22/08/2017.
  */
@@ -42,6 +45,42 @@ public class DAO {
         } catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    public List<APOD> GetAll(){
+
+        List<APOD> result = new ArrayList<APOD>();
+        try {
+
+            SQLiteDatabase db = helper.getReadableDatabase();
+
+            Cursor cursor = db.rawQuery("SELECT * FROM "+ DBHelper.TBL_APOD
+                    + " ORDER BY " + DBHelper.COL_DATE, null);
+
+            int index_date = cursor.getColumnIndex(DBHelper.COL_DATE);
+            int index_title = cursor.getColumnIndex(DBHelper.COL_TITLE);
+            int index_explanation = cursor.getColumnIndex(DBHelper.COL_EXPLANATION);
+            int index_url = cursor.getColumnIndex(DBHelper.COL_URL);
+            int index_copyright = cursor.getColumnIndex(DBHelper.COL_COPYRIGHT);
+
+            while(cursor.moveToNext()){
+                String date = cursor.getString(index_date);
+                String title = cursor.getString(index_title);
+                String explanation = cursor.getString(index_explanation);
+                String url = cursor.getString(index_url);
+                String copyright = cursor.getString(index_copyright);
+
+                APOD apod = new APOD(date, title, explanation, url, copyright);
+                
+                result.add(apod);
+            }
+
+            cursor.close();
+
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return  result;
     }
 
     public boolean Exists(APOD apod){
