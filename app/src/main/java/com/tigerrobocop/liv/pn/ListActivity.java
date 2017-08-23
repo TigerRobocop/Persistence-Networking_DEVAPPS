@@ -66,7 +66,6 @@ public class ListActivity extends AppCompatActivity {
             super.onPostExecute(apod);
 
             Log.d("APOD", "url:" + apod.url);
-
             mResult.setText(apod.url);
         }
     }
