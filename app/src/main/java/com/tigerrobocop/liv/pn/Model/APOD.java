@@ -12,8 +12,8 @@ public class APOD implements Serializable {
 
     }
 
-    public APOD(String date, String title, String explanation, String url, String copyright, String mediaType) {
-
+    public APOD(long dbID, String date, String title, String explanation, String url, String copyright, String mediaType) {
+        this.dbID = dbID;
         this.date = date;
         this.title = title;
         this.explanation = explanation;
@@ -22,6 +22,7 @@ public class APOD implements Serializable {
         this.media_type = mediaType;
     }
 
+    public long dbID;
     public String date;
     public String title;
     public String explanation;

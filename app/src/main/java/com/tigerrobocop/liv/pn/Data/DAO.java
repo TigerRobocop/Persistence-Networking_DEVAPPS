@@ -34,6 +34,7 @@ public class DAO {
 
             ContentValues cv = new ContentValues();
 
+
             cv.put(DBHelper.COL_DATE, apod.date);
             cv.put(DBHelper.COL_TITLE, apod.title);
             cv.put(DBHelper.COL_EXPLANATION, apod.explanation);
@@ -66,6 +67,7 @@ public class DAO {
             Cursor cursor = db.rawQuery("SELECT * FROM "+ DBHelper.TBL_APOD
                     + " ORDER BY " + DBHelper.COL_DATE, null);
 
+            int index_dbID = cursor.getColumnIndex(DBHelper.COL_dbID);
             int index_date = cursor.getColumnIndex(DBHelper.COL_DATE);
             int index_title = cursor.getColumnIndex(DBHelper.COL_TITLE);
             int index_explanation = cursor.getColumnIndex(DBHelper.COL_EXPLANATION);
@@ -74,6 +76,7 @@ public class DAO {
             int index_media_type = cursor.getColumnIndex(DBHelper.COL_MEDIA_TYPE);
 
             while(cursor.moveToNext()){
+                long dbID = cursor.getLong(index_dbID);
                 String date = cursor.getString(index_date);
                 String title = cursor.getString(index_title);
                 String explanation = cursor.getString(index_explanation);
@@ -81,7 +84,7 @@ public class DAO {
                 String copyright = cursor.getString(index_copyright);
                 String media_type = cursor.getString(index_media_type);
 
-                APOD apod = new APOD(date, title, explanation, url, copyright, media_type);
+                APOD apod = new APOD(dbID, date, title, explanation, url, copyright, media_type);
 
                 result.add(apod);
             }

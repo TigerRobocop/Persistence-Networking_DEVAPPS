@@ -106,8 +106,8 @@ public class Util {
         try {
             JSONObject json = new JSONObject(body);
 
-            result = new APOD(
-                    json.getString("date")
+            result = new APOD(0
+                    , json.getString("date")
                     , json.getString("title")
                     , json.getString("explanation")
                     , json.getString("url")

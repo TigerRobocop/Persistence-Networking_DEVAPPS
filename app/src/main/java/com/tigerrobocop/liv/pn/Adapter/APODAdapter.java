@@ -34,7 +34,8 @@ public class APODAdapter extends ArrayAdapter<APOD> {
             viewHolder = new ViewHolder();
 
             viewHolder.mImg = (ImageView)convertView.findViewById(R.id.img_image);
-            viewHolder.mTxtCopyright = (TextView)convertView.findViewById(R.id.lbl_copyright);
+            viewHolder.mTxtMediaType = (TextView)convertView.findViewById(R.id.lbl_media_type);
+          //  viewHolder.mTxtCopyright = (TextView)convertView.findViewById(R.id.lbl_copyright);
             viewHolder.mTxtTitle = (TextView)convertView.findViewById(R.id.lbl_title);
 
             convertView.setTag(viewHolder);
@@ -45,17 +46,27 @@ public class APODAdapter extends ArrayAdapter<APOD> {
         APOD item = getItem(position);
 
         if(item != null){
-            Picasso.with(getContext()).load(item.url).into(viewHolder.mImg);
+
+
             viewHolder.mTxtTitle.setText(item.title);
-            viewHolder.mTxtCopyright.setText(item.copyright == "" ? item.media_type : item.copyright);
+            viewHolder.mTxtMediaType.setText(item.media_type);
+
+            if(item.media_type.equals("video")){
+                Picasso.with(getContext()).load(R.mipmap.video).into(viewHolder.mImg);
+            }else{
+                Picasso.with(getContext()).load(item.url).into(viewHolder.mImg);
+            }
         }
 
         return convertView;
     }
+
+
 }
 
 class ViewHolder {
     ImageView mImg;
     TextView mTxtTitle;
+    TextView mTxtMediaType;
     TextView mTxtCopyright;
 }

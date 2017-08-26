@@ -1,8 +1,11 @@
 package com.tigerrobocop.liv.pn;
 
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.tigerrobocop.liv.pn.Adapter.APODAdapter;
@@ -58,9 +63,9 @@ public class ListFragment extends android.support.v4.app.ListFragment {
 
         SharedPreferences sp = getActivity().getSharedPreferences(Util.SP_DATA, MODE_PRIVATE);
         String lastUpdate = sp.getString(Util.SP_LAST_UPDATE, "");
-
-        if (TextUtils.isEmpty(lastUpdate) || (lastUpdate.compareTo(Util.GetCurrentDateString()) < 0)) {
-            Log.d("APOD", Util.FormatDate(Util.GetCurrentDateString()));
+        String currentDate = Util.GetCurrentDateString();
+        if (TextUtils.isEmpty(lastUpdate) || (lastUpdate.compareTo(currentDate) < 0)) {
+            Log.d("APOD", Util.FormatDate(currentDate));
 
             if (Util.isConnected(getActivity())) {
                 new AlertDialog.Builder(getActivity())
@@ -77,10 +82,20 @@ public class ListFragment extends android.support.v4.app.ListFragment {
                             }
                         })
                         .setNegativeButton(android.R.string.no, null).show();
-
-
             }
         }
+
+        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                                           int pos, long id) {
+                final APOD apod = (APOD) arg0.getItemAtPosition(pos);
+
+                Toast.makeText(getActivity(), "On long click listener - Item " + apod.dbID, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -88,6 +103,15 @@ public class ListFragment extends android.support.v4.app.ListFragment {
         super.onResume();
         LoadList();
     }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+
+        APOD apod = (APOD) l.getItemAtPosition(position);
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(apod.url)));
+    }
+
 
     public void clearSearch() {
         mAdapter = new APODAdapter(getActivity(), mList);
@@ -121,14 +145,12 @@ public class ListFragment extends android.support.v4.app.ListFragment {
         protected void onPostExecute(APOD apod) {
             super.onPostExecute(apod);
 
-            // TODO :: insert into DB then refresh listview
             Log.d("APOD", "url:" + apod.url);
             mDAO.Insert(apod);
-            // TODO :: update SharedPrefrences - lastUpdate date
+
             SharedPreferences sp = getActivity().getSharedPreferences(Util.SP_DATA, MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putString(Util.SP_LAST_UPDATE, apod.date);
-
             editor.commit();
 
             LoadList();
