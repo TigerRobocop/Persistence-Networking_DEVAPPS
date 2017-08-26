@@ -95,10 +95,8 @@ public class ListFragment extends android.support.v4.app.ListFragment {
     }
 
     void LoadList() {
-
-        DAO _dao = new DAO(getActivity());
         mList.clear();
-        mList.addAll(_dao.GetAll());
+        mList.addAll(mDAO.GetAll());
         mAdapter.notifyDataSetChanged();
     }
 
@@ -132,6 +130,8 @@ public class ListFragment extends android.support.v4.app.ListFragment {
             editor.putString(Util.SP_LAST_UPDATE, apod.date);
 
             editor.commit();
+
+            LoadList();
         }
     }
 
