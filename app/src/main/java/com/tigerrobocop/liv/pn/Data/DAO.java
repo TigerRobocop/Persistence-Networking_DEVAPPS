@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import com.tigerrobocop.liv.pn.Model.APOD;
 import com.tigerrobocop.liv.pn.Util.Util;
@@ -33,7 +34,6 @@ public class DAO {
             SQLiteDatabase db = helper.getWritableDatabase();
 
             ContentValues cv = new ContentValues();
-
 
             cv.put(DBHelper.COL_DATE, apod.date);
             cv.put(DBHelper.COL_TITLE, apod.title);
@@ -114,13 +114,10 @@ public class DAO {
         boolean result = false;
 
         try {
-
-            String lastUpdate = "2017";
-
             SQLiteDatabase db = helper.getReadableDatabase();
 
             String selection = DBHelper.COL_DATE + "=?";
-            String[] selectionArgs = new String[]{ lastUpdate };
+            String[] selectionArgs = new String[]{ apod.date };
             Cursor cursor = db.query(DBHelper.TBL_APOD, null, selection, selectionArgs, null, null, null);
 
             if(cursor.getCount() > 0){
@@ -134,5 +131,24 @@ public class DAO {
         }
 
         return result;
+    }
+
+    public void Update(APOD apod){
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        // New value for one column
+        ContentValues values = new ContentValues();
+       // values.put(DBHelper.COL_DATE, apod.date);
+        values.put(DBHelper.COL_TITLE, "edited ~ " + apod.title);
+
+        // Which row to update, based on the title
+        String selection = DBHelper.COL_DATE + " = ?";
+        String[] selectionArgs = { apod.date };
+
+        int count = db.update(
+                DBHelper.TBL_APOD,
+                values,
+                selection,
+                selectionArgs);
     }
 }

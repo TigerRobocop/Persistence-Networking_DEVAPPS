@@ -61,29 +61,6 @@ public class ListFragment extends android.support.v4.app.ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        SharedPreferences sp = getActivity().getSharedPreferences(Util.SP_DATA, MODE_PRIVATE);
-        String lastUpdate = sp.getString(Util.SP_LAST_UPDATE, "");
-        String currentDate = Util.GetCurrentDateString();
-        if (TextUtils.isEmpty(lastUpdate) || (lastUpdate.compareTo(currentDate) < 0)) {
-            Log.d("APOD", Util.FormatDate(currentDate));
-
-            if (Util.isConnected(getActivity())) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Title")
-                        .setMessage("Do you really want to whatever?")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // Toast.makeText(getActivity(), "Yaay", Toast.LENGTH_SHORT).show();
-
-                                GetAPODTask task = new GetAPODTask();
-                                task.execute();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, null).show();
-            }
-        }
 
         getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
@@ -110,6 +87,41 @@ public class ListFragment extends android.support.v4.app.ListFragment {
                 return true;
             }
         });
+
+        if (Util.isConnected(getActivity())) {
+            GetAPODTask task = new GetAPODTask();
+            task.execute();
+        }
+
+
+            /*
+        SharedPreferences sp = getActivity().getSharedPreferences(Util.SP_DATA, MODE_PRIVATE);
+        String lastUpdate = sp.getString(Util.SP_LAST_UPDATE, "");
+        String currentDate = Util.GetCurrentDateString();
+
+        if (TextUtils.isEmpty(lastUpdate) || (lastUpdate.compareTo(currentDate) < 0)) {
+            Log.d("APOD", Util.FormatDate(currentDate));
+
+            if (Util.isConnected(getActivity())) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Title")
+                        .setMessage("Do you really want to whatever?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Toast.makeText(getActivity(), "Yaay", Toast.LENGTH_SHORT).show();
+
+                                GetAPODTask task = new GetAPODTask();
+                                task.execute();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null).show();
+            }
+
+        }*/
+
+
     }
 
     @Override
@@ -160,13 +172,22 @@ public class ListFragment extends android.support.v4.app.ListFragment {
             super.onPostExecute(apod);
 
             Log.d("APOD", "url:" + apod.url);
-            mDAO.Insert(apod);
 
+            if(mDAO.Exists(apod)){
+                mDAO.Update(apod);
+                Toast.makeText(getActivity(), "Item updated", Toast.LENGTH_SHORT).show();
+            }else{
+                mDAO.Insert(apod);
+                Toast.makeText(getActivity(), "Item inserted", Toast.LENGTH_SHORT).show();
+            }
+
+
+            /*
             SharedPreferences sp = getActivity().getSharedPreferences(Util.SP_DATA, MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putString(Util.SP_LAST_UPDATE, apod.date);
             editor.commit();
-
+*/
             LoadList();
         }
     }
