@@ -2,13 +2,18 @@ package com.tigerrobocop.liv.pn.Data;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.tigerrobocop.liv.pn.Model.APOD;
+import com.tigerrobocop.liv.pn.Util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
+import static java.security.AccessController.getContext;
 
 /**
  * Created by Livia on 22/08/2017.
@@ -34,6 +39,7 @@ public class DAO {
             cv.put(DBHelper.COL_EXPLANATION, apod.explanation);
             cv.put(DBHelper.COL_URL, apod.url);
             cv.put(DBHelper.COL_COPYRIGHT, apod.copyright);
+            cv.put(DBHelper.COL_MEDIA_TYPE, apod.media_type);
 
             long id = db.insert(DBHelper.TBL_APOD
                     , null
@@ -42,7 +48,7 @@ public class DAO {
             if (id == -1)
                 throw new RuntimeException("Error inserting into db");
             else {
-                // TODO :: update SharedPrefrences - lastUpdate date
+
             }
 
         } catch(Exception e){
@@ -65,6 +71,7 @@ public class DAO {
             int index_explanation = cursor.getColumnIndex(DBHelper.COL_EXPLANATION);
             int index_url = cursor.getColumnIndex(DBHelper.COL_URL);
             int index_copyright = cursor.getColumnIndex(DBHelper.COL_COPYRIGHT);
+            int index_media_type = cursor.getColumnIndex(DBHelper.COL_MEDIA_TYPE);
 
             while(cursor.moveToNext()){
                 String date = cursor.getString(index_date);
@@ -72,8 +79,9 @@ public class DAO {
                 String explanation = cursor.getString(index_explanation);
                 String url = cursor.getString(index_url);
                 String copyright = cursor.getString(index_copyright);
+                String media_type = cursor.getString(index_media_type);
 
-                APOD apod = new APOD(date, title, explanation, url, copyright);
+                APOD apod = new APOD(date, title, explanation, url, copyright, media_type);
 
                 result.add(apod);
             }
@@ -101,21 +109,9 @@ public class DAO {
             String[] selectionArgs = new String[]{ lastUpdate };
             Cursor cursor = db.query(DBHelper.TBL_APOD, null, selection, selectionArgs, null, null, null);
 
-            /*
-            int index_id = cursor.getColumnIndex(DBHelper.COL_ID);
-            int index_name = cursor.getColumnIndex(DBHelper.COL_NAME);
-            int index_year = cursor.getColumnIndex(DBHelper.COL_YEAR);
-
-            while(cursor.moveToNext()){
-                int id = cursor.getInt(index_id);
-                String name = cursor.getString(index_name);
-                String year = cursor.getString(index_year);
-
-                Car c = new Car(id, name, year);
-                result.add(c);
+            if(cursor.getCount() > 0){
+               result = true;
             }
-
-            */
 
             cursor.close();
 

@@ -47,7 +47,7 @@ public class APODAdapter extends ArrayAdapter<APOD> {
         if(item != null){
             Picasso.with(getContext()).load(item.url).into(viewHolder.mImg);
             viewHolder.mTxtTitle.setText(item.title);
-            viewHolder.mTxtCopyright.setText(item.copyright);
+            viewHolder.mTxtCopyright.setText(item.copyright == "" ? item.media_type : item.copyright);
         }
 
         return convertView;

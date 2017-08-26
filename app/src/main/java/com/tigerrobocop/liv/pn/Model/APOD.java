@@ -12,13 +12,14 @@ public class APOD implements Serializable {
 
     }
 
-    public APOD(String date, String title, String explanation, String url, String copyright) {
+    public APOD(String date, String title, String explanation, String url, String copyright, String mediaType) {
 
         this.date = date;
         this.title = title;
         this.explanation = explanation;
         this.url = url;
         this.copyright = copyright;
+        this.media_type = mediaType;
     }
 
     public String date;
@@ -26,10 +27,9 @@ public class APOD implements Serializable {
     public String explanation;
     public String url;
     public String copyright;
-
+    public String media_type;
 
     // unused from JSON response
     public String hdurl;
-    public String media_type;
     public String service_version;
 }

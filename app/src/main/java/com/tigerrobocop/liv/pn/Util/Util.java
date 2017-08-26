@@ -18,7 +18,11 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,6 +30,9 @@ import java.util.List;
  */
 
 public class Util {
+
+    public static final String SP_DATA = "SP_DATA";
+    public static final String SP_LAST_UPDATE = "LAST_UPDATE";
 
     public static boolean isConnected(Context c) {
         boolean connected = false;
@@ -104,11 +111,35 @@ public class Util {
                     , json.getString("title")
                     , json.getString("explanation")
                     , json.getString("url")
-                    , json.getString("copyright")
+                    , json.has("copyright") ? json.getString("copyright") : ""
+                    , json.getString("media_type")
             );
 
 
         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public static String GetCurrentDateString() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
+
+    public static String FormatDate(String date) {
+
+        DateFormat df_in = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat df_out = new SimpleDateFormat("dd/MM/yyyy");
+        Date dtResult;
+        String result = "";
+        try {
+            dtResult = df_in.parse(date);
+            result = df_out.format(dtResult);
+
+        } catch (ParseException e) {
             e.printStackTrace();
         }
 
