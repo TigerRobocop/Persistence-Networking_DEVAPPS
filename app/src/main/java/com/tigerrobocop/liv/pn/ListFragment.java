@@ -92,7 +92,21 @@ public class ListFragment extends android.support.v4.app.ListFragment {
                                            int pos, long id) {
                 final APOD apod = (APOD) arg0.getItemAtPosition(pos);
 
-                Toast.makeText(getActivity(), "On long click listener - Item " + apod.dbID, Toast.LENGTH_LONG).show();
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Title")
+                        .setMessage("Delete item?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                mDAO.Delete(apod);
+                                Toast.makeText(getActivity(), "Item deleted", Toast.LENGTH_SHORT).show();
+                                LoadList();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null).show();
+
                 return true;
             }
         });

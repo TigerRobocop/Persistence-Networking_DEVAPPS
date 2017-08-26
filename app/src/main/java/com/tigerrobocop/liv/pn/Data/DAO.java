@@ -57,6 +57,17 @@ public class DAO {
         }
     }
 
+    public void Delete(APOD apod){
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        db.delete(DBHelper.TBL_APOD, DBHelper.COL_dbID + " = ? "
+                , new String[]{String.valueOf(apod.dbID)}
+        );
+
+        db.close();
+
+    }
+
     public List<APOD> GetAll(){
 
         List<APOD> result = new ArrayList<APOD>();
