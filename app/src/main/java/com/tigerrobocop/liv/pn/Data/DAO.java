@@ -76,7 +76,7 @@ public class DAO {
             SQLiteDatabase db = helper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery("SELECT * FROM "+ DBHelper.TBL_APOD
-                    + " ORDER BY " + DBHelper.COL_DATE, null);
+                    + " ORDER BY " + DBHelper.COL_DATE + " DESC ", null);
 
             int index_dbID = cursor.getColumnIndex(DBHelper.COL_dbID);
             int index_date = cursor.getColumnIndex(DBHelper.COL_DATE);

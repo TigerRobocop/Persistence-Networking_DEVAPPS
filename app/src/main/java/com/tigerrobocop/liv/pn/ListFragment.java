@@ -62,50 +62,17 @@ public class ListFragment extends android.support.v4.app.ListFragment {
         super.onActivityCreated(savedInstanceState);
 
 
-        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
-            @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-                                           int pos, long id) {
-                final APOD apod = (APOD) arg0.getItemAtPosition(pos);
-
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Title")
-                        .setMessage("Delete item?")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                mDAO.Delete(apod);
-                                Toast.makeText(getActivity(), "Item deleted", Toast.LENGTH_SHORT).show();
-                                LoadList();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, null).show();
-
-                return true;
-            }
-        });
-
-        if (Util.isConnected(getActivity())) {
-            GetAPODTask task = new GetAPODTask();
-            task.execute();
-        }
-
-
-            /*
         SharedPreferences sp = getActivity().getSharedPreferences(Util.SP_DATA, MODE_PRIVATE);
         String lastUpdate = sp.getString(Util.SP_LAST_UPDATE, "");
         String currentDate = Util.GetCurrentDateString();
 
         if (TextUtils.isEmpty(lastUpdate) || (lastUpdate.compareTo(currentDate) < 0)) {
-            Log.d("APOD", Util.FormatDate(currentDate));
+            Log.d("APOD", "Inserting new item: " + Util.FormatDate(currentDate));
 
             if (Util.isConnected(getActivity())) {
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("Title")
-                        .setMessage("Do you really want to whatever?")
+                        .setTitle("Update")
+                        .setMessage("Get latest item?")
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
@@ -118,9 +85,48 @@ public class ListFragment extends android.support.v4.app.ListFragment {
                         })
                         .setNegativeButton(android.R.string.no, null).show();
             }
+        } else {
+            Log.d("APOD", "Item already inserted for current date: " + Util.FormatDate(currentDate));
+        }
 
-        }*/
+        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                                           int pos, long id) {
+                final APOD apod = (APOD) arg0.getItemAtPosition(pos);
+
+                String currentDate = Util.GetCurrentDateString();
+
+                if ((currentDate.equals(apod.date))) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Title")
+                            .setMessage("Delete item?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                    SharedPreferences sp1 = getActivity().getSharedPreferences(Util.SP_DATA, MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sp1.edit();
+                                    editor.putString(Util.SP_LAST_UPDATE, "");
+                                    editor.commit();
+
+                                    Log.d("APOD", "Delete item date: " + apod.date);
+                                    mDAO.Delete(apod);
+
+                                    Toast.makeText(getActivity(), "Item deleted", Toast.LENGTH_SHORT).show();
+                                    LoadList();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null).show();
+                }else{
+                    Toast.makeText(getActivity(), "Unable to delete older items", Toast.LENGTH_SHORT).show();
+                }
+
+                return true;
+            }
+        });
 
     }
 
@@ -171,7 +177,8 @@ public class ListFragment extends android.support.v4.app.ListFragment {
         protected void onPostExecute(APOD apod) {
             super.onPostExecute(apod);
 
-            Log.d("APOD", "url:" + apod.url);
+            Log.d("APOD", "New item url: " + apod.url);
+
 
             if(mDAO.Exists(apod)){
                 mDAO.Update(apod);
@@ -181,13 +188,11 @@ public class ListFragment extends android.support.v4.app.ListFragment {
                 Toast.makeText(getActivity(), "Item inserted", Toast.LENGTH_SHORT).show();
             }
 
-
-            /*
             SharedPreferences sp = getActivity().getSharedPreferences(Util.SP_DATA, MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putString(Util.SP_LAST_UPDATE, apod.date);
             editor.commit();
-*/
+
             LoadList();
         }
     }
